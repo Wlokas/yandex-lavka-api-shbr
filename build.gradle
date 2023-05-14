@@ -12,10 +12,41 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('testcontainersVersion', "1.18.0")
+    set('springBootStarterJPAVersion', "3.0.4")
+    set('springBootStarterWebVersion', "3.0.4")
+    set('springBootStarterAopVersion', "3.0.4")
+    set('springBootStarterValidationVersion', "3.0.4")
+    set('springBootStarterTestVersion', "3.0.4")
+    set('guavaVersion', "31.1-jre")
+    set('lombokVersion', "1.18.26")
+    set('postgresQLVersion', "42.5.4")
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    runtimeOnly 'org.postgresql:postgresql'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Spring
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootStarterJPAVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootStarterWebVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-aop:${springBootStarterAopVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootStarterValidationVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}"
+
+    // Google Guava
+    implementation "com.google.guava:guava:${guavaVersion}"
+
+    // Lombok
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // PostgreSQL
+    runtimeOnly "org.postgresql:postgresql:${postgresQLVersion}"
+
+    // Logging
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0"
+
 }
 
 tasks.named('test') {

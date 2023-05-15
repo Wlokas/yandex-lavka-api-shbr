@@ -14,11 +14,14 @@ import ru.yandex.yandexlavka.exceptions.IllegalOffsetArgumentException;
 import ru.yandex.yandexlavka.mappers.courier.CourierMapper;
 import ru.yandex.yandexlavka.mappers.courier.CreateCourierDtoMapper;
 import ru.yandex.yandexlavka.models.Courier;
+import ru.yandex.yandexlavka.models.CourierMetaInfo;
 import ru.yandex.yandexlavka.requests.CreateCourierRequest;
 import ru.yandex.yandexlavka.responses.CreateCouriersResponse;
+import ru.yandex.yandexlavka.responses.GetCourierMetaInfoResponse;
 import ru.yandex.yandexlavka.responses.GetCouriersResponse;
 import ru.yandex.yandexlavka.services.CourierService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,10 +59,35 @@ public class CourierController {
 
   @GetMapping("/{courier_id}")
   @RateLimited
-  public ResponseEntity<?> getCourier(@PathVariable Long courier_id) {
-    Courier courier = courierService.getCourier(courier_id).orElseThrow(CourierNotFoundException::new);
+  public ResponseEntity<?> getCourier(@PathVariable("courier_id") Long courierId) {
+    Courier courier = courierService.getCourier(courierId).orElseThrow(CourierNotFoundException::new);
 
     return ResponseEntity.ok(courierMapper.courierToCourierDto(courier));
+  }
+
+  @GetMapping("/meta-info/{courier_id}")
+  @RateLimited
+  public ResponseEntity<?> getMetaInfoCourier(@PathVariable("courier_id") Long courierId,
+                                              @RequestParam("startDate") LocalDate startDate,
+                                              @RequestParam("endDate") LocalDate endDate) {
+    Courier courier = courierService.getCourier(courierId).orElseThrow(CourierNotFoundException::new);
+    CourierMetaInfo courierMetaInfo = courierService.getMetaInfoCourier(courier, startDate, endDate);
+
+    if (courierMetaInfo.getEarnings() == 0 &&courierMetaInfo.getRating() == 0) {
+      // Отдаем ничего если не выполнено ни одного заказа
+      return ResponseEntity.ok().build();
+    }
+
+    CourierDto courierDto = courierMapper.courierToCourierDto(courier);
+
+    return ResponseEntity.ok(new GetCourierMetaInfoResponse(
+            courierDto.getId(),
+            courierDto.getType(),
+            courierDto.getRegions(),
+            courierDto.getWorkingHours(),
+            courierMetaInfo.getRating(),
+            courierMetaInfo.getEarnings()
+    ));
   }
 
   @PostMapping

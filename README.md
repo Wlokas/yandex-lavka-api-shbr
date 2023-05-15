@@ -82,6 +82,8 @@ java -jar build/libs/*SNAPSHOT.jar
 
 ## Документация проекта 
 
+### [RateLimiter]() - ограничитель RPS на метод
+
 
 
 

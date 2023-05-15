@@ -28,7 +28,7 @@ public class Order {
   @JoinColumn(name = "region_id")
   private Region region;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "courier_id")
   private Courier courier;
 

@@ -5,18 +5,22 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.yandexlavka.annotation.ratelimit.RateLimited;
+import ru.yandex.yandexlavka.dto.order.CompleteOrderDto;
 import ru.yandex.yandexlavka.dto.order.OrderDto;
-import ru.yandex.yandexlavka.exceptions.IllegalLimitArgumentException;
-import ru.yandex.yandexlavka.exceptions.IllegalOffsetArgumentException;
-import ru.yandex.yandexlavka.exceptions.OrderNotFoundException;
+import ru.yandex.yandexlavka.exceptions.*;
 import ru.yandex.yandexlavka.mappers.order.CreateOrderDtoMapper;
 import ru.yandex.yandexlavka.mappers.order.OrderMapper;
+import ru.yandex.yandexlavka.models.Courier;
 import ru.yandex.yandexlavka.models.Order;
+import ru.yandex.yandexlavka.requests.CompleteOrderRequest;
 import ru.yandex.yandexlavka.requests.CreateOrderRequest;
+import ru.yandex.yandexlavka.services.CourierService;
 import ru.yandex.yandexlavka.services.OrderService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -26,17 +30,37 @@ public class OrderController {
   private final OrderMapper orderMapper;
   private final CreateOrderDtoMapper createOrderDtoMapper;
   private final OrderService orderService;
+  private final CourierService courierService;
 
-  public OrderController(OrderMapper orderMapper, CreateOrderDtoMapper createOrderDtoMapper, OrderService orderService) {
+  public OrderController(OrderMapper orderMapper, CreateOrderDtoMapper createOrderDtoMapper, OrderService orderService, CourierService courierService) {
     this.orderMapper = orderMapper;
     this.createOrderDtoMapper = createOrderDtoMapper;
     this.orderService = orderService;
+    this.courierService = courierService;
   }
 
-  @GetMapping("/complete")
+  @PostMapping("/complete")
   @RateLimited
-  public ResponseEntity<?> completedOrders() {
-    return ResponseEntity.ok("ok");
+  public ResponseEntity<?> completedOrders(@Valid @RequestBody CompleteOrderRequest completeOrderRequest) {
+    List<Order> ordersUpdate = new ArrayList<>();
+    for(CompleteOrderDto completeOrderDto : completeOrderRequest.getCompleteInfo()) {
+      Order order = orderService.getOrder(completeOrderDto.getOrderId()).orElseThrow(OrderCompleteBadRequestException::new);
+      Courier courier = courierService.getCourier(completeOrderDto.getCourierId()).orElseThrow(OrderCompleteBadRequestException::new);
+
+      if(order.getCourier() == null || !Objects.equals(order.getCourier().getId(), courier.getId())) {
+        throw new OrderCompleteCourierNotAssignedException();
+      }
+
+      // идемпотентность
+      if(!order.getIsCompleted()) {
+        order.setIsCompleted(true);
+        order.setCompletedTime(completeOrderDto.getCompleteTime());
+        order = orderService.updateOrder(order);
+      }
+      ordersUpdate.add(order);
+
+    }
+    return ResponseEntity.ok(ordersUpdate.stream().map(orderMapper::orderToOrderDto).toList());
   }
 
   @PostMapping("/assign")

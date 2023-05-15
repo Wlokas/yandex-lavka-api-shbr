@@ -22,6 +22,11 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  public Order updateOrder(Order order) {
+    return orderCrudRepository.save(order);
+  }
+
+  @Override
   public List<Order> getOrders(Integer offset, Integer limit) {
     return orderCrudRepository.findAllByOffset(offset, limit);
   }

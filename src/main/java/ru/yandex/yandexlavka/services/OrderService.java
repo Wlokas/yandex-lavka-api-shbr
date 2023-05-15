@@ -9,6 +9,8 @@ public interface OrderService {
 
   Optional<Order> getOrder(Long id);
 
+  Order updateOrder(Order order);
+
   List<Order> getOrders(Integer offset, Integer limit);
 
   Iterable<Order> addOrders(List<Order> orders);

@@ -1,4 +1,4 @@
-package ru.yandex.yandexlavka.ratelimit;
+package ru.yandex.yandexlavka.annotation.ratelimit;
 
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.wlokas.yandexdostavka.exceptions.TooManyRequestsException;
+import ru.yandex.yandexlavka.exceptions.TooManyRequestsException;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class ControllerRateLimitingAspect {
 
   private static final Map<String, RateLimiter> limits = new ConcurrentHashMap<>();
 
-  @Around("@annotation(ru.wlokas.yandexdostavka.annotation.ratelimit.RateLimited)")
+  @Around("@annotation(ru.yandex.yandexlavka.annotation.ratelimit.RateLimited)")
   public Object rateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
     Signature signature = joinPoint.getSignature();
     Method method = signature instanceof MethodSignature ?

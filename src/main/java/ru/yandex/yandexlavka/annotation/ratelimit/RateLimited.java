@@ -1,4 +1,4 @@
-package ru.yandex.yandexlavka.ratelimit;
+package ru.yandex.yandexlavka.annotation.ratelimit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

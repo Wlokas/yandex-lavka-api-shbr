@@ -29,6 +29,21 @@ spring.datasource.password=${POSTGRES_PASSWORD}
 ```
 yandexlavka.ratelimiter.max_rpc_endpoint=10.0
 ```
+3. Настройка коэффициентов рассечете курьеру рейтинга и зарплаты
+```
+yandexlavka.coefficient.earnings.foot=2
+yandexlavka.coefficient.earnings.bike=3
+yandexlavka.coefficient.earnings.auto=4
+
+yandexlavka.coefficient.rating.foot=3
+yandexlavka.coefficient.rating.bike=2
+yandexlavka.coefficient.rating.auto=1
+```
+4. Включение и отключение JDBC logger'a
+
+````
+decorator.datasource.enabled=true/false
+````
 
 Упрвлением зависимостей и сборки занимается **gradle**, подробнее в файле **[build.gradle](build.gradle)**
 

@@ -81,8 +81,9 @@ java -jar build/libs/*SNAPSHOT.jar
 ---
 
 ## Документация проекта 
-
-### [RateLimiter]() - ограничитель RPS на метод
+### [OpenAPI](doc/openapi.json) - спецификация API
+### [Технический документ](doc/Product-requirements-documentation.md) - обязательная спецификация проекта
+### [RateLimiter](doc/ratelimit.md) - ограничитель RPS на метод
 
 
 

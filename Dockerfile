@@ -1,4 +1,6 @@
 FROM openjdk:17.0.1-jdk-slim AS TEMP_BUILD_IMAGE
+MAINTAINER Maxim Sadowscky <sadowsckymaksim@yandex.ru>
+LABEL version="1.0" description="Gradle build project yandex-lavka"
 ENV APP_HOME=/opt/app
 WORKDIR $APP_HOME
 COPY build.gradle settings.gradle gradlew $APP_HOME/
@@ -7,6 +9,8 @@ COPY . .
 RUN ./gradlew build -x test --no-daemon
 
 FROM openjdk:17.0.1-jdk-slim
+MAINTAINER Maxim Sadowscky <sadowsckymaksim@yandex.ru>
+LABEL version="1.0" description="Start yandex-lavka project"
 ENV APP_HOME=/opt/app
 WORKDIR $APP_HOME
 

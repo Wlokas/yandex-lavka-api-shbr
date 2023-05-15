@@ -75,7 +75,7 @@ public class CourierController {
 
     if (courierMetaInfo.getEarnings() == 0 &&courierMetaInfo.getRating() == 0) {
       // Отдаем ничего если не выполнено ни одного заказа
-      return ResponseEntity.ok().build();
+      return ResponseEntity.notFound().build();
     }
 
     CourierDto courierDto = courierMapper.courierToCourierDto(courier);

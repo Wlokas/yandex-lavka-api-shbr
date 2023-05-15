@@ -5,7 +5,7 @@ ENV APP_HOME=/opt/app
 WORKDIR $APP_HOME
 COPY build.gradle settings.gradle gradlew $APP_HOME/
 COPY gradle $APP_HOME/gradle
-COPY . .
+COPY src $APP_HOME/src
 RUN ./gradlew build -x test --no-daemon
 
 FROM openjdk:17.0.1-jdk-slim

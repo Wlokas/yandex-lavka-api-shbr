@@ -1,19 +1,14 @@
 package ru.yandex.yandexlavka.models;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.yandex.yandexlavka.models.enums.CourierType;
 
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class Courier {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

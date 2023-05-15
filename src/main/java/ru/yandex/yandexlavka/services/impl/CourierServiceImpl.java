@@ -1,5 +1,6 @@
 package ru.yandex.yandexlavka.services.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CourierServiceImpl implements CourierService {
 
   private final CourierCrudRepository repository;
@@ -46,17 +48,20 @@ public class CourierServiceImpl implements CourierService {
 
   @Override
   public void addCourier(Courier courier) {
+    log.info("Created new courier: {}", courier);
     repository.save(courier);
   }
 
   @Override
   @Transactional
   public Iterable<Courier> addCouriers(List<Courier> couriersList) {
+    couriersList.forEach(c -> log.info("Created new courier: {}", c));
     return repository.saveAll(couriersList);
   }
 
   @Override
   public Optional<Courier> getCourier(Long id) {
+    log.info("Try get courier with id: {}", id);
     return repository.findById(id);
   }
 
@@ -67,6 +72,7 @@ public class CourierServiceImpl implements CourierService {
 
   @Override
   public CourierMetaInfo getMetaInfoCourier(Courier courier, LocalDate startDate, LocalDate endDate) {
+    log.info("Get meta info courier: {}", courier);
     List<Order> orders = courierJpaRepository.getAllCompleteOrdersDateRange(courier, startDate.atStartOfDay(), endDate.atStartOfDay());
     int rating = 0;
     int earnings = 0;

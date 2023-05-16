@@ -47,15 +47,14 @@ public class OrderController {
       Order order = orderService.getOrder(completeOrderDto.getOrderId()).orElseThrow(OrderCompleteBadRequestException::new);
       Courier courier = courierService.getCourier(completeOrderDto.getCourierId()).orElseThrow(OrderCompleteBadRequestException::new);
 
-      if(order.getCourier() == null || !Objects.equals(order.getCourier().getId(), courier.getId())) {
-        throw new OrderCompleteCourierNotAssignedException();
-      }
-
       // идемпотентность
       if(!order.getIsCompleted()) {
         order.setIsCompleted(true);
         order.setCompletedTime(completeOrderDto.getCompleteTime());
+        order.setCourier(courier);
         order = orderService.updateOrder(order);
+      } else if (!Objects.equals(order.getCourier().getId(), courier.getId())) {
+        throw new OrderCompleteCourierNotAssignedException();
       }
       ordersUpdate.add(order);
 

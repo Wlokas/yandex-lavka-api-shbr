@@ -11,6 +11,7 @@ import ru.yandex.yandexlavka.dto.courier.CourierDto;
 import ru.yandex.yandexlavka.exceptions.CourierNotFoundException;
 import ru.yandex.yandexlavka.exceptions.IllegalLimitArgumentException;
 import ru.yandex.yandexlavka.exceptions.IllegalOffsetArgumentException;
+import ru.yandex.yandexlavka.exceptions.IllegalStartEndDateException;
 import ru.yandex.yandexlavka.mappers.courier.CourierMapper;
 import ru.yandex.yandexlavka.mappers.courier.CreateCourierDtoMapper;
 import ru.yandex.yandexlavka.models.Courier;
@@ -70,10 +71,13 @@ public class CourierController {
   public ResponseEntity<?> getMetaInfoCourier(@PathVariable("courier_id") Long courierId,
                                               @RequestParam("startDate") LocalDate startDate,
                                               @RequestParam("endDate") LocalDate endDate) {
+    if (startDate.isEqual(endDate) || startDate.isAfter(endDate)) {
+      throw new IllegalStartEndDateException();
+    }
     Courier courier = courierService.getCourier(courierId).orElseThrow(CourierNotFoundException::new);
     CourierMetaInfo courierMetaInfo = courierService.getMetaInfoCourier(courier, startDate, endDate);
 
-    if (courierMetaInfo.getEarnings() == 0 &&courierMetaInfo.getRating() == 0) {
+    if (courierMetaInfo.getEarnings() == 0 && courierMetaInfo.getRating() == 0) {
       // Отдаем ничего если не выполнено ни одного заказа
       return ResponseEntity.notFound().build();
     }
